@@ -1,8 +1,7 @@
 ﻿
 // Algo Final Project -- Noah Miller
 
-// creating dictionary for ingredients, along with their calories. set dictionary values as
-// string, and int.
+// creating dictionary for ingredients, along with their calories. set dictionary values as string, and int.
 Dictionary<string, int> ingredients = new Dictionary<string, int>
 {
   { "Bread", 66 },
@@ -66,7 +65,10 @@ else
 
     // must check to make sure bread is not excluded, check to see if ingredients doesn't
     // contain bread
-    if (!ingredients.ContainsKey("Bread") || !ingredients.ContainsKey("Bread".ToLower()) || !ingredients.ContainsKey("Bread".ToUpper()))
+    if (!ingredients.ContainsKey("Bread") || 
+        !ingredients.ContainsKey("Bread".ToLower()) || 
+        !ingredients.ContainsKey("Bread".ToUpper())
+        )
     {
         Console.WriteLine("Sandwiches must include Bread.");
     }
@@ -77,11 +79,11 @@ else
 }
 
 
-// Function to make a sandwich within the given calorie range, must add randomizer for ingredients.
-// set makeSandwich to list<string> to return a list of strings, and add inputs as paramaters
+// Function to make a sandwich within the given calorie range, set makeSandwich to list<string>
+// to return a list of strings, and add inputs as paramaters
 List<string> makeSandwich(Dictionary<string, int> ingredients, int minCalories, int maxCalories)
 {
-    // create empty list to store sandwich ingredients
+    // create an empty list to store sandwich ingredients
     List<string> sandwich = new List<string>();
     // initialize int variable to 0 so you can add values from sandwich ingredients
     int currentCalories = 0;
@@ -91,7 +93,36 @@ List<string> makeSandwich(Dictionary<string, int> ingredients, int minCalories, 
     sandwich.Add("Bread");
     currentCalories += ingredients["Bread"] * 2;
 
-    
+    // Iterate through the available ingredients/variables in variable list
+    foreach (var ingredientVar in ingredients)
+    {
+        // access ingredients and calories through key and value of dictionary
+        // link: https://www.tutorialsteacher.com/csharp/csharp-dictionary
+        string ingredient = ingredientVar.Key;
+        int calories = ingredientVar.Value;
 
+        // add continue in loop to skip if the ingredient is bread, which is automatically added
+        // or if it exceeds the maximum calories
+        if (ingredient == "Bread" || currentCalories + calories > maxCalories)
+            continue;
+
+        // check to see if the added ingredient is not adjacent to itself
+        // check to see if sandwich list has at least two items, compare last two items to added ingredient,
+        // if value returns true, then item cannot be added, if so continue on and find another ingredient
+        // set variable for sandwich count to stop redundancy
+        int sandwichCount = sandwich.Count;
+        if (sandwichCount >= 2 && sandwich[sandwichCount - 1] == ingredient && sandwich[sandwichCount - 2] == ingredient)
+            continue;
+
+        // if all validation is met, add ingredients to sandwich list, and append calories to current
+        sandwich.Add(ingredient);
+        currentCalories += calories;
+
+        // Check if the calorie range is met, and end the iteration if so
+        if (currentCalories >= minCalories && currentCalories <= maxCalories)
+            break;
+    }
+
+    // return sandwich list of ingredients
     return sandwich;
 }
