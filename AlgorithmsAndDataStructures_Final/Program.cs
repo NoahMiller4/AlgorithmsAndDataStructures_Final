@@ -1,7 +1,8 @@
 ﻿
 // Algo Final Project -- Noah Miller
 
-// creating dictionary for ingredients, along with their calories
+// creating dictionary for ingredients, along with their calories. set dictionary values as
+// string, and int.
 Dictionary<string, int> ingredients = new Dictionary<string, int>
 {
   { "Bread", 66 },
@@ -73,4 +74,24 @@ else
     {
 
     }
+}
+
+
+// Function to make a sandwich within the given calorie range, must add randomizer for ingredients.
+// set makeSandwich to list<string> to return a list of strings, and add inputs as paramaters
+List<string> makeSandwich(Dictionary<string, int> ingredients, int minCalories, int maxCalories)
+{
+    // create empty list to store sandwich ingredients
+    List<string> sandwich = new List<string>();
+    // initialize int variable to 0 so you can add values from sandwich ingredients
+    int currentCalories = 0;
+
+    // Add two slices of bread to sandwich and append calories from list
+    sandwich.Add("Bread");
+    sandwich.Add("Bread");
+    currentCalories += ingredients["Bread"] * 2;
+
+    
+
+    return sandwich;
 }
