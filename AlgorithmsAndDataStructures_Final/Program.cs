@@ -57,30 +57,55 @@ if (minCalories > maxCalories)
 }
 else
 {
-    // if calorie count is ok, start removing items from excludedIngredients input
+    // Create a copy of the ingredients dictionary
+    Dictionary<string, int> availableIngredients = new Dictionary<string, int>(ingredients);
+
+    // Remove the excluded ingredients from the availableIngredients dictionary
     foreach (string ingredient in excludedIngredients)
     {
-        ingredients.Remove(ingredient.Trim());
+        string trimmedIngredient = ingredient.Trim();
+        if (availableIngredients.ContainsKey(trimmedIngredient))
+        {
+            availableIngredients.Remove(trimmedIngredient);
+        }
     }
 
-    // must check to make sure bread is not excluded, check to see if ingredients doesn't
-    // contain bread
-    if (!ingredients.ContainsKey("Bread") || 
-        !ingredients.ContainsKey("Bread".ToLower()) || 
-        !ingredients.ContainsKey("Bread".ToUpper())
-        )
+    // Check if "Bread" is present in availableIngredients dictionary
+    if (!availableIngredients.ContainsKey("Bread"))
     {
         Console.WriteLine("Sandwiches must include Bread.");
     }
     else
     {
+        // Create a sandwich in the given calorie range
+        List<string> sandwich = makeSandwich(availableIngredients, minCalories, maxCalories);
 
+        if (sandwich.Count == 0)
+        {
+            Console.WriteLine("Unable to create a sandwich within the calorie range.");
+        }
+        else
+        {
+            Console.WriteLine("Making your sandwich");
+            Console.WriteLine();
+
+            // console write each ingredient and its calorie count
+            foreach (string ingredient in sandwich)
+            {
+                Console.WriteLine("Adding " + ingredient + " (" + ingredients[ingredient] + " calories)");
+            }
+
+            // create total calories and use sum to calculate the total as to not use iteration to count everything.
+            int totalCalories = sandwich.Sum(ingredient => ingredients[ingredient]);
+
+            Console.WriteLine();
+            Console.WriteLine("Your sandwich, with " + totalCalories + " calories, is ready. Enjoy!");
+        }
     }
 }
 
-
 // Function to make a sandwich within the given calorie range, set makeSandwich to list<string>
-// to return a list of strings, and add inputs as paramaters
+// to return a list of strings, and add inputs as parameters
 List<string> makeSandwich(Dictionary<string, int> ingredients, int minCalories, int maxCalories)
 {
     // create an empty list to store sandwich ingredients
@@ -88,41 +113,48 @@ List<string> makeSandwich(Dictionary<string, int> ingredients, int minCalories, 
     // initialize int variable to 0 so you can add values from sandwich ingredients
     int currentCalories = 0;
 
-    // Add two slices of bread to sandwich and append calories from list
-    sandwich.Add("Bread");
-    sandwich.Add("Bread");
-    currentCalories += ingredients["Bread"] * 2;
-
-    // Iterate through the available ingredients/variables in variable list
-    foreach (var ingredientVar in ingredients)
+    // Check if "Bread" is present in ingredients dictionary
+    if (ingredients.ContainsKey("Bread"))
     {
-        // access ingredients and calories through key and value of dictionary
-        // link: https://www.tutorialsteacher.com/csharp/csharp-dictionary
-        string ingredient = ingredientVar.Key;
-        int calories = ingredientVar.Value;
+        // Add two slices of bread to sandwich and append calories from list
+        sandwich.Add("Bread");
+        sandwich.Add("Bread");
+        currentCalories += ingredients["Bread"] * 2;
 
-        // add continue in loop to skip if the ingredient is bread, which is automatically added
-        // or if it exceeds the maximum calories
-        if (ingredient == "Bread" || currentCalories + calories > maxCalories)
+        // Remove "Bread" from available ingredients
+        ingredients.Remove("Bread");
+    }
+
+    // creating a list of ingredients that does not contain bread
+    List<string> availableIngredients = new List<string>(ingredients.Keys);
+
+    // initialize variable fro index of ingredient
+    int ingredientIndex = 0;
+
+    // iterate through until reaching the maximum calorie count or no more available ingredients
+    // if ingredients run out, print total
+    while (currentCalories < maxCalories && availableIngredients.Count > 0)
+    {
+        // create ingredient string of available ingredients at index 0
+        string ingredient = availableIngredients[ingredientIndex];
+
+        // Check if adding the ingredient goes over maximum calorie count
+        if (currentCalories + ingredients[ingredient] > maxCalories)
+        {
+            // Move to the next ingredient with modulus of list index length
+            ingredientIndex = (ingredientIndex + 1) % availableIngredients.Count;
             continue;
+        }
 
-        // check to see if the added ingredient is not adjacent to itself
-        // check to see if sandwich list has at least two items, compare last two items to added ingredient,
-        // if value returns true, then item cannot be added, if so continue on and find another ingredient
-        // set variable for sandwich count to stop redundancy
-        int sandwichCount = sandwich.Count;
-        if (sandwichCount >= 2 && sandwich[sandwichCount - 1] == ingredient && sandwich[sandwichCount - 2] == ingredient)
-            continue;
-
-        // if all validation is met, add ingredients to sandwich list, and append calories to current
+        // Add the ingredient to the sandwich and append calories
         sandwich.Add(ingredient);
-        currentCalories += calories;
+        currentCalories += ingredients[ingredient];
 
-        // Check if the calorie range is met, and end the iteration if so
-        if (currentCalories >= minCalories && currentCalories <= maxCalories)
-            break;
+        // Move to the next ingredient
+        ingredientIndex = (ingredientIndex + 1) % availableIngredients.Count;
     }
 
     // return sandwich list of ingredients
     return sandwich;
 }
+    
