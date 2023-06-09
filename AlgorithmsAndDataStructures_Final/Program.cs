@@ -33,3 +33,13 @@ Dictionary<string, int> ingredients = new Dictionary<string, int>
   { "Spinach", 7 },
   { "Avocado", 64 }
 };
+
+// Ask User for min/max calories, and if they want to exclude ingredients
+Console.WriteLine("Enter the minimum number of calories you would like in your sandwich:");
+Console.ReadLine();
+
+Console.WriteLine("Enter the maximum number of calories you would like in your sandwich:");
+Console.ReadLine();
+
+Console.WriteLine("Do you want to exclude any ingredients? (Separate multiple ingredients with commas)");
+Console.ReadLine();
