@@ -36,10 +36,41 @@ Dictionary<string, int> ingredients = new Dictionary<string, int>
 
 // Ask User for min/max calories, and if they want to exclude ingredients
 Console.WriteLine("Enter the minimum number of calories you would like in your sandwich:");
-Console.ReadLine();
+int minCalories = int.Parse(Console.ReadLine());
 
 Console.WriteLine("Enter the maximum number of calories you would like in your sandwich:");
-Console.ReadLine();
+int maxCalories = int.Parse(Console.ReadLine());
 
 Console.WriteLine("Do you want to exclude any ingredients? (Separate multiple ingredients with commas)");
-Console.ReadLine();
+
+string exclude = Console.ReadLine();
+// must store the input in a string array, split by commas to store all excluded 
+// ingredients entered in the input
+string[] excludedIngredients = exclude.Split(',');
+
+Console.WriteLine();
+
+// Validate calorie range, min cals can not be greater than max 
+if (minCalories > maxCalories)
+{
+    Console.WriteLine("Minimum calories can't be greater than maximum calories.");
+}
+else
+{
+    // if calorie count is ok, start removing items from excludedIngredients input
+    foreach (string ingredient in excludedIngredients)
+    {
+        ingredients.Remove(ingredient.Trim());
+    }
+
+    // must check to make sure bread is not excluded, check to see if ingredients doesn't
+    // contain bread
+    if (!ingredients.ContainsKey("Bread") || !ingredients.ContainsKey("Bread".ToLower()) || !ingredients.ContainsKey("Bread".ToUpper()))
+    {
+        Console.WriteLine("Sandwiches must include Bread.");
+    }
+    else
+    {
+
+    }
+}
